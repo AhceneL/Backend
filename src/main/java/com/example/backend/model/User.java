@@ -1,6 +1,8 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -70,4 +72,8 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    @ManyToMany(mappedBy = "membres")
+    private List<Projet> projets = new ArrayList<>();
+
 }

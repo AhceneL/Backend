@@ -10,6 +10,7 @@ import com.example.backend.service.ProjetService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,20 +27,48 @@ public class ProjetServiceImpl implements ProjetService {
 
     @Override
     public ProjetDto createProjet(ProjetDto dto) {
+        System.out.println("📥 Reçu projet: " + dto);
+
         Projet projet = new Projet();
         projet.setNom(dto.getNom());
         projet.setDescription(dto.getDescription());
         projet.setDateDebut(dto.getDateDebut());
         projet.setDateFin(dto.getDateFin());
 
-        // 🔐 Extraire l’utilisateur connecté à partir du token JWT
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User createur = userRepo.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Utilisateur connecté non trouvé"));
-        projet.setCreateur(createur);
+        try {
+            // 🔐 Extraire l’utilisateur connecté
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            System.out.println("🔑 Email extrait du token : " + email);
 
-        Projet saved = projetRepo.save(projet);
-        return toDto(saved);
+            User createur = userRepo.findByEmail(email)
+                    .orElseThrow(() -> new NotFoundException("Utilisateur connecté non trouvé"));
+
+            projet.setCreateur(createur);
+
+            // ✅ Ajouter les membres
+            List<User> membres = new ArrayList<>();
+            if (dto.getMembresEmails() != null) {
+                for (String emailMembre : dto.getMembresEmails()) {
+                    User membre = userRepo.findByEmail(emailMembre.trim())
+                            .orElseThrow(() -> new NotFoundException("Membre avec l'e-mail " + emailMembre + " non trouvé."));
+                    membres.add(membre);
+                }
+            }
+            projet.setMembres(membres);
+
+            // 🔍 Debug : afficher les membres
+            System.out.println("👥 Membres à enregistrer :");
+            projet.getMembres().forEach(u -> System.out.println(" - " + u.getEmail()));
+
+            Projet saved = projetRepo.save(projet);
+            System.out.println("✅ Projet sauvegardé avec ID : " + saved.getId());
+
+            return toDto(saved);
+
+        } catch (Exception e) {
+            System.out.println("❌ ERREUR lors de la création du projet : " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override

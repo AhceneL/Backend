@@ -3,6 +3,7 @@ package com.example.backend.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ProjetDto {
@@ -12,4 +13,7 @@ public class ProjetDto {
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private Long createurId;
+
+    //  Liste des e-mails des membres à ajouter
+    private List<String> membresEmails;
 }
