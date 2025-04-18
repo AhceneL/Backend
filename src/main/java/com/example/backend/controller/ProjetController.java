@@ -36,6 +36,12 @@ public class ProjetController {
         return ResponseEntity.ok(projetService.getAllProjets());
     }
 
+    // ✅ Récupérer les projets du créateur connecté
+    @GetMapping("/mes-projets")
+    public ResponseEntity<List<ProjetDto>> getMesProjets() {
+        return ResponseEntity.ok(projetService.getProjetsDuCreateur());
+    }
+
     // ✅ Modifier un projet
     @PutMapping("/{id}")
     public ResponseEntity<ProjetDto> update(@PathVariable Long id, @RequestBody ProjetDto dto) {

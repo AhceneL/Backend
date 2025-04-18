@@ -86,6 +86,18 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    public List<ProjetDto> getProjetsDuCreateur() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User createur = userRepo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Utilisateur connecté non trouvé"));
+
+        return projetRepo.findAll().stream()
+                .filter(p -> p.getCreateur().getId().equals(createur.getId()))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ProjetDto updateProjet(Long id, ProjetDto dto) {
         Projet projet = projetRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Projet non trouvé"));
@@ -116,6 +128,7 @@ public class ProjetServiceImpl implements ProjetService {
         dto.setDateDebut(projet.getDateDebut());
         dto.setDateFin(projet.getDateFin());
         dto.setCreateurId(projet.getCreateur().getId());
+        dto.setCreateurEmail(projet.getCreateur().getEmail());
         return dto;
     }
 }

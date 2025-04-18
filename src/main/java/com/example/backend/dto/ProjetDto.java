@@ -14,6 +14,9 @@ public class ProjetDto {
     private LocalDate dateFin;
     private Long createurId;
 
-    //  Liste des e-mails des membres à ajouter
+    // ✅ Ajout pour affichage côté front-end
+    private String createurEmail;
+
+    // ✅ Liste des e-mails des membres à ajouter
     private List<String> membresEmails;
 }

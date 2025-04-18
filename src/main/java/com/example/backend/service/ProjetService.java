@@ -13,6 +13,9 @@ public interface ProjetService {
 
     List<ProjetDto> getAllProjets();
 
+    // ✅ Projets créés par l'utilisateur connecté
+    List<ProjetDto> getProjetsDuCreateur();
+
     ProjetDto updateProjet(Long id, ProjetDto dto);
 
     void deleteProjet(Long id);
