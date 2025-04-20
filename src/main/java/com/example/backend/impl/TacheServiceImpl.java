@@ -33,10 +33,10 @@ public class TacheServiceImpl implements TacheService {
         Projet projet = projetRepo.findById(dto.getProjetId())
                 .orElseThrow(() -> new NotFoundException("Projet non trouvé"));
 
-        // Trouver le membre assigné par ID
+        // Trouver le membre assigné par email
         User assignee = null;
-        if (dto.getAssigneeId() != null) {
-            assignee = userRepo.findById(dto.getAssigneeId())
+        if (dto.getAssigneeEmail() != null) {
+            assignee = userRepo.findByEmail(dto.getAssigneeEmail())  // Recherche par email
                     .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
         }
 
@@ -47,7 +47,7 @@ public class TacheServiceImpl implements TacheService {
         tache.setStatut(dto.getStatut());
         tache.setDateLimite(dto.getDateLimite());
         tache.setProjet(projet);
-        tache.setAssignee(assignee);
+        tache.setAssigneeEmail(dto.getAssigneeEmail());  // Assigner le membre via son email
 
         // Sauvegarder la tâche et retourner le DTO
         return toDto(tacheRepo.save(tache));
@@ -58,6 +58,14 @@ public class TacheServiceImpl implements TacheService {
         // Récupérer toutes les tâches du projet et les convertir en DTO
         return tacheRepo.findByProjetId(projetId).stream()
                 .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TacheDto> getTachesParAssigneeEmail(String assigneeEmail) {
+        // Récupérer toutes les tâches assignées à l'email
+        return tacheRepo.findByAssigneeEmail(assigneeEmail).stream()
+                .map(this::toDto) // Convertir en DTO
                 .collect(Collectors.toList());
     }
 
@@ -74,10 +82,10 @@ public class TacheServiceImpl implements TacheService {
         tache.setDateLimite(dto.getDateLimite());
 
         // Si un assignee (membre assigné) est spécifié, vérifier son existence
-        if (dto.getAssigneeId() != null) {
-            User assignee = userRepo.findById(dto.getAssigneeId())
+        if (dto.getAssigneeEmail() != null) {
+            User assignee = userRepo.findByEmail(dto.getAssigneeEmail())  // Recherche par email
                     .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
-            tache.setAssignee(assignee);
+            tache.setAssigneeEmail(dto.getAssigneeEmail());  // Assigner le membre via son email
         }
 
         // Sauvegarder et retourner la tâche mise à jour
@@ -102,7 +110,7 @@ public class TacheServiceImpl implements TacheService {
         dto.setStatut(t.getStatut());
         dto.setDateLimite(t.getDateLimite());
         dto.setProjetId(t.getProjet().getId());
-        dto.setAssigneeId(t.getAssignee() != null ? t.getAssignee().getId() : null);
+        dto.setAssigneeEmail(t.getAssigneeEmail()); // Utilisation de l'email du membre
         return dto;
     }
 }

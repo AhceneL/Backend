@@ -21,7 +21,7 @@ public class TacheController {
 
     /**
      * Ajouter une tâche.
-     * Cette méthode crée une tâche et affecte un membre si l'ID du membre est valide.
+     * Cette méthode crée une tâche et affecte un membre en utilisant son email.
      * @param dto - Les données de la tâche à créer
      * @return ResponseEntity avec le DTO de la tâche ajoutée
      */

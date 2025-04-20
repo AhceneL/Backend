@@ -31,7 +31,6 @@ public class Tache {
     @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;
 
-    @ManyToOne
-    @JoinColumn(name = "assignee_id")
-    private User assignee;
+    @Column(name = "assignee_email")
+    private String assigneeEmail;
 }

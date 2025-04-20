@@ -12,5 +12,5 @@ public class TacheDto {
     private String statut;
     private LocalDate dateLimite;
     private Long projetId;
-    private Long assigneeId;
+    private String assigneeEmail; // Utiliser l'email du membre assigné
 }
