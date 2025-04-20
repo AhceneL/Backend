@@ -9,7 +9,7 @@ CREATE TABLE users (
 );
 
 --  Projets
-CREATE TABLE projets (
+CREATE TABLE projet (
                          id SERIAL PRIMARY KEY,
                          nom VARCHAR(150) NOT NULL,
                          description TEXT,
@@ -23,18 +23,18 @@ CREATE TABLE projet_membres (
                                 projet_id INTEGER NOT NULL,
                                 membre_id INTEGER NOT NULL,
                                 PRIMARY KEY (projet_id, membre_id),
-                                CONSTRAINT fk_projet FOREIGN KEY (projet_id) REFERENCES projets(id) ON DELETE CASCADE,
+                                CONSTRAINT fk_projet FOREIGN KEY (projet_id) REFERENCES projet(id) ON DELETE CASCADE,
                                 CONSTRAINT fk_membre FOREIGN KEY (membre_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 --  Tâches
-CREATE TABLE taches (
+CREATE TABLE tache (
                         id SERIAL PRIMARY KEY,
                         titre VARCHAR(150) NOT NULL,
                         description TEXT,
                         statut VARCHAR(50) DEFAULT 'en_attente', -- 'en_cours', 'termine'
                         date_limite DATE,
-                        projet_id INTEGER REFERENCES projets(id) ON DELETE CASCADE,
+                        projet_id INTEGER REFERENCES projet(id) ON DELETE CASCADE,
                         assignee_id INTEGER REFERENCES users(id) ON DELETE SET NULL -- assignée à un utilisateur
 );
 

@@ -29,15 +29,18 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     public TacheDto ajouterTache(TacheDto dto) {
+        // Trouver le projet par ID
         Projet projet = projetRepo.findById(dto.getProjetId())
                 .orElseThrow(() -> new NotFoundException("Projet non trouvé"));
 
+        // Trouver le membre assigné par ID
         User assignee = null;
         if (dto.getAssigneeId() != null) {
             assignee = userRepo.findById(dto.getAssigneeId())
                     .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
         }
 
+        // Créer la tâche
         Tache tache = new Tache();
         tache.setTitre(dto.getTitre());
         tache.setDescription(dto.getDescription());
@@ -46,11 +49,13 @@ public class TacheServiceImpl implements TacheService {
         tache.setProjet(projet);
         tache.setAssignee(assignee);
 
+        // Sauvegarder la tâche et retourner le DTO
         return toDto(tacheRepo.save(tache));
     }
 
     @Override
     public List<TacheDto> getTachesParProjet(Long projetId) {
+        // Récupérer toutes les tâches du projet et les convertir en DTO
         return tacheRepo.findByProjetId(projetId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -58,32 +63,38 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     public TacheDto modifierTache(Long id, TacheDto dto) {
+        // Trouver la tâche par ID
         Tache tache = tacheRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Tâche non trouvée"));
 
+        // Modifier la tâche avec les nouvelles données
         tache.setTitre(dto.getTitre());
         tache.setDescription(dto.getDescription());
         tache.setStatut(dto.getStatut());
         tache.setDateLimite(dto.getDateLimite());
 
+        // Si un assignee (membre assigné) est spécifié, vérifier son existence
         if (dto.getAssigneeId() != null) {
             User assignee = userRepo.findById(dto.getAssigneeId())
                     .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
             tache.setAssignee(assignee);
         }
 
+        // Sauvegarder et retourner la tâche mise à jour
         return toDto(tacheRepo.save(tache));
     }
 
     @Override
     public void supprimerTache(Long id) {
+        // Vérifier si la tâche existe avant de la supprimer
         if (!tacheRepo.existsById(id)) {
             throw new NotFoundException("Tâche à supprimer non trouvée");
         }
-        tacheRepo.deleteById(id);
+        tacheRepo.deleteById(id); // Supprimer la tâche
     }
 
     private TacheDto toDto(Tache t) {
+        // Convertir une entité Tache en DTO pour la réponse
         TacheDto dto = new TacheDto();
         dto.setId(t.getId());
         dto.setTitre(t.getTitre());

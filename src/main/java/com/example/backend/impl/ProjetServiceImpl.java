@@ -119,6 +119,17 @@ public class ProjetServiceImpl implements ProjetService {
         projetRepo.deleteById(id);
     }
 
+    public void addMemberToProject(Long projetId, String email) {
+        Projet projet = projetRepo.findById(projetId)
+                .orElseThrow(() -> new NotFoundException("Projet non trouvé"));
+
+        User membre = userRepo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Membre non trouvé avec l'email : " + email));
+
+        projet.getMembres().add(membre); // Ajouter le membre à la liste des membres du projet
+        projetRepo.save(projet); // Sauvegarder les modifications du projet
+    }
+
     // 📤 Convertir entité vers DTO
     private ProjetDto toDto(Projet projet) {
         ProjetDto dto = new ProjetDto();
@@ -129,6 +140,13 @@ public class ProjetServiceImpl implements ProjetService {
         dto.setDateFin(projet.getDateFin());
         dto.setCreateurId(projet.getCreateur().getId());
         dto.setCreateurEmail(projet.getCreateur().getEmail());
+
+        // Ajouter la liste des emails des membres
+        dto.setMembresEmails(projet.getMembres().stream()
+                .map(User::getEmail)
+                .collect(Collectors.toList()));
+
         return dto;
     }
+
 }

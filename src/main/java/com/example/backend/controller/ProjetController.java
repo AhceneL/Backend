@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/projets")
@@ -53,5 +54,12 @@ public class ProjetController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         projetService.deleteProjet(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ Ajouter un membre à un projet
+    @PutMapping("/{id}/ajouter-membre")
+    public ResponseEntity<Void> addMemberToProject(@PathVariable Long id, @RequestBody Map<String, String> email) {
+        projetService.addMemberToProject(id, email.get("email"));
+        return ResponseEntity.ok().build();
     }
 }

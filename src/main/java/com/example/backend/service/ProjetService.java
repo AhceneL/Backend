@@ -19,4 +19,7 @@ public interface ProjetService {
     ProjetDto updateProjet(Long id, ProjetDto dto);
 
     void deleteProjet(Long id);
+
+    // ✅ Ajouter un membre à un projet
+    void addMemberToProject(Long projetId, String email);
 }
