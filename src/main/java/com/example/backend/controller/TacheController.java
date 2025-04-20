@@ -71,6 +71,7 @@ public class TacheController {
         }
     }
 
+
     /**
      * Modifier une tâche existante.
      * @param id - ID de la tâche à modifier
@@ -80,6 +81,9 @@ public class TacheController {
     @PutMapping("/{id}")
     public ResponseEntity<TacheDto> modifierTache(@PathVariable Long id, @RequestBody TacheDto dto) {
         try {
+            // Log des données reçues
+
+
             TacheDto updatedTask = tacheService.modifierTache(id, dto);
             return ResponseEntity.ok(updatedTask);
         } catch (NotFoundException e) {

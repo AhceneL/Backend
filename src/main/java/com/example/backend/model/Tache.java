@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,4 +35,12 @@ public class Tache {
 
     @Column(name = "assignee_email")
     private String assigneeEmail;
+
+    @ElementCollection
+    @CollectionTable(name = "commentaires", joinColumns = @JoinColumn(name = "tache_id"))
+    @Column(name = "commentaire")
+    private List<String> commentaires = new ArrayList<>();
+
+    @Column(name = "fichier")
+    private String fichier;
 }

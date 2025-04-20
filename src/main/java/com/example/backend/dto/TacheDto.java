@@ -3,6 +3,7 @@ package com.example.backend.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class TacheDto {
@@ -13,4 +14,6 @@ public class TacheDto {
     private LocalDate dateLimite;
     private Long projetId;
     private String assigneeEmail; // Utiliser l'email du membre assigné
+    private List<String> commentaires; // Liste des commentaires
+    private String fichier;
 }

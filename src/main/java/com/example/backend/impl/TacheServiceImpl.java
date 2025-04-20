@@ -81,23 +81,25 @@ public class TacheServiceImpl implements TacheService {
         Tache tache = tacheRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Tâche non trouvée"));
 
-        // Modifier la tâche avec les nouvelles données
+        // Modifier les champs de la tâche
         tache.setTitre(dto.getTitre());
         tache.setDescription(dto.getDescription());
         tache.setStatut(dto.getStatut());
         tache.setDateLimite(dto.getDateLimite());
 
-        // Si un assignee (membre assigné) est spécifié, vérifier son existence
-        if (dto.getAssigneeEmail() != null) {
-            User assignee = userRepo.findByEmail(dto.getAssigneeEmail())  // Recherche par email
-                    .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
-            tache.setAssigneeEmail(dto.getAssigneeEmail());  // Assigner le membre via son email
+        // Mettre à jour les commentaires si présents
+        if (dto.getCommentaires() != null) {
+            tache.getCommentaires().addAll(dto.getCommentaires());
         }
 
-        // Sauvegarder et retourner la tâche mise à jour
+        // Mettre à jour le fichier si présent
+        if (dto.getFichier() != null) {
+            tache.setFichier(dto.getFichier());
+        }
+
+        // Enregistrer les modifications dans la base de données
         return toDto(tacheRepo.save(tache));
     }
-
     @Override
     public void supprimerTache(Long id) {
         // Vérifier si la tâche existe avant de la supprimer
@@ -117,6 +119,8 @@ public class TacheServiceImpl implements TacheService {
         dto.setDateLimite(t.getDateLimite());
         dto.setProjetId(t.getProjet().getId());
         dto.setAssigneeEmail(t.getAssigneeEmail()); // Utilisation de l'email du membre
+        dto.setCommentaires(t.getCommentaires());
+        dto.setFichier(t.getFichier());
         return dto;
     }
 }

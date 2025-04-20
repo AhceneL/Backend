@@ -29,14 +29,16 @@ CREATE TABLE projet_membres (
 
 --  Tâches
 CREATE TABLE tache (
-                        id SERIAL PRIMARY KEY,
-                        titre VARCHAR(150) NOT NULL,
-                        description TEXT,
-                        statut VARCHAR(50) DEFAULT 'en_attente', -- 'en_cours', 'termine'
-                        date_limite DATE,
-                        projet_id INTEGER REFERENCES projet(id) ON DELETE CASCADE,
-                        assignee_id INTEGER REFERENCES users(id) ON DELETE SET NULL -- assignée à un utilisateur
+                       id SERIAL PRIMARY KEY,
+                       titre VARCHAR(150) NOT NULL,
+                       description TEXT,
+                       statut VARCHAR(50) DEFAULT 'en_attente', -- 'en_cours', 'termine'
+                       date_limite DATE,
+                       projet_id INTEGER REFERENCES projet(id) ON DELETE CASCADE, -- Clé étrangère vers la table projet
+                       assignee_email VARCHAR(255), -- Email de l'utilisateur assigné
+                       FOREIGN KEY (assignee_email) REFERENCES users(email) ON DELETE SET NULL -- Clé étrangère vers l'email de l'utilisateur, ON DELETE SET NULL
 );
+
 
 --  Notifications
 CREATE TABLE notifications (
