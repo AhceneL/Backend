@@ -42,6 +42,18 @@ public class TacheController {
         }
     }
 
+    // Récupérer une tâche spécifique par son ID
+    @GetMapping("/{taskId}")
+    public ResponseEntity<TacheDto> getTacheById(@PathVariable Long taskId) {
+        try {
+            TacheDto task = tacheService.getTacheById(taskId);
+            return ResponseEntity.ok(task);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(null);  // Tâche non trouvée
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);  // Erreur interne du serveur
+        }
+    }
     /**
      * Récupérer les tâches d'un projet spécifique.
      * @param projetId - ID du projet pour lequel les tâches doivent être récupérées

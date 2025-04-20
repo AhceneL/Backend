@@ -70,6 +70,12 @@ public class TacheServiceImpl implements TacheService {
     }
 
     @Override
+    public TacheDto getTacheById(Long taskId) {
+        Tache tache = tacheRepo.findById(taskId)
+                .orElseThrow(() -> new NotFoundException("Tâche non trouvée avec l'ID: " + taskId));
+        return toDto(tache);  // Retourne le DTO de la tâche
+    }
+    @Override
     public TacheDto modifierTache(Long id, TacheDto dto) {
         // Trouver la tâche par ID
         Tache tache = tacheRepo.findById(id)
