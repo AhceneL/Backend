@@ -8,4 +8,6 @@ public interface UserService {
     UserDto register(User user);
     UserDto login(UserCredentialsDto credentials);
     UserDto getById(Long id);
+    UserDto getUserProfile(String email);  // Nouvelle méthode
+    UserDto updateUserProfile(UserDto userDto);  // Nouvelle méthode
 }

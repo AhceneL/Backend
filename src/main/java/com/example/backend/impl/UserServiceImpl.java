@@ -42,6 +42,30 @@ public class UserServiceImpl implements UserService {
                 .map(this::toDto)
                 .orElseThrow(() -> new NotFoundException("Utilisateur non trouvé"));
     }
+    @Override
+    // Nouvelle méthode pour récupérer le profil de l'utilisateur par son email
+    public UserDto getUserProfile(String email) {
+        User user = repo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Utilisateur avec cet email non trouvé"));
+        return toDto(user);
+    }
+    @Override
+    // Nouvelle méthode pour mettre à jour le profil de l'utilisateur
+    public UserDto updateUserProfile(UserDto userDto) {
+        // Récupérer l'utilisateur depuis la base de données
+        User user = repo.findById(userDto.getId())
+                .orElseThrow(() -> new NotFoundException("Utilisateur non trouvé"));
+
+        // Mettre à jour les informations de l'utilisateur
+        user.setNom(userDto.getNom());
+        user.setPrenom(userDto.getPrenom());
+        user.setEmail(userDto.getEmail());  // Mise à jour de l'email
+
+        // Enregistrer l'utilisateur mis à jour
+        return toDto(repo.save(user));
+    }
+
+
 
     private UserDto toDto(User user) {
         UserDto dto = new UserDto();

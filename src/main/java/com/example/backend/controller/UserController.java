@@ -8,6 +8,7 @@ import com.example.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.example.backend.exceptions.NotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,5 +53,26 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
+    }
+    // Récupérer le profil de l'utilisateur
+    @GetMapping("/profile/{email}")
+    public ResponseEntity<UserDto> getUserProfile(@PathVariable String email) {
+        try {
+            UserDto userDto = service.getUserProfile(email);
+            return ResponseEntity.ok(userDto);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    // Mettre à jour le profil de l'utilisateur
+    @PutMapping("/profile")
+    public ResponseEntity<UserDto> updateUserProfile(@RequestBody UserDto userDto) {
+        try {
+            UserDto updatedUser = service.updateUserProfile(userDto);
+            return ResponseEntity.ok(updatedUser);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 }

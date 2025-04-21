@@ -98,7 +98,12 @@ public class TacheServiceImpl implements TacheService {
 
         // Mettre à jour les commentaires si présents
         if (dto.getCommentaires() != null) {
-            tache.getCommentaires().addAll(dto.getCommentaires());
+            // Ajouter uniquement les commentaires qui n'existent pas déjà
+            for (String commentaire : dto.getCommentaires()) {
+                if (!tache.getCommentaires().contains(commentaire)) {
+                    tache.getCommentaires().add(commentaire);
+                }
+            }
         }
 
         // Mettre à jour le fichier si présent
@@ -109,6 +114,7 @@ public class TacheServiceImpl implements TacheService {
         // Enregistrer les modifications dans la base de données
         return toDto(tacheRepo.save(tache));
     }
+
     @Override
     public void supprimerTache(Long id) {
         // Vérifier si la tâche existe avant de la supprimer
