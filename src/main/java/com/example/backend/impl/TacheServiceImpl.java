@@ -2,9 +2,11 @@ package com.example.backend.impl;
 
 import com.example.backend.dto.TacheDto;
 import com.example.backend.exceptions.NotFoundException;
+import com.example.backend.model.Notification;
 import com.example.backend.model.Projet;
 import com.example.backend.model.Tache;
 import com.example.backend.model.User;
+import com.example.backend.repository.NotificationRepository;
 import com.example.backend.repository.ProjetRepository;
 import com.example.backend.repository.TacheRepository;
 import com.example.backend.repository.UserRepository;
@@ -20,11 +22,14 @@ public class TacheServiceImpl implements TacheService {
     private final TacheRepository tacheRepo;
     private final ProjetRepository projetRepo;
     private final UserRepository userRepo;
+    private final NotificationRepository notificationRepo;
 
-    public TacheServiceImpl(TacheRepository tacheRepo, ProjetRepository projetRepo, UserRepository userRepo) {
+    // Constructeur avec injection des dépendances
+    public TacheServiceImpl(TacheRepository tacheRepo, ProjetRepository projetRepo, UserRepository userRepo, NotificationRepository notificationRepo) {
         this.tacheRepo = tacheRepo;
         this.projetRepo = projetRepo;
         this.userRepo = userRepo;
+        this.notificationRepo = notificationRepo;
     }
 
     @Override
@@ -49,8 +54,15 @@ public class TacheServiceImpl implements TacheService {
         tache.setProjet(projet);
         tache.setAssigneeEmail(dto.getAssigneeEmail());  // Assigner le membre via son email
 
-        // Sauvegarder la tâche et retourner le DTO
-        return toDto(tacheRepo.save(tache));
+        // Sauvegarder la tâche
+        Tache savedTache = tacheRepo.save(tache);
+
+        // Notifier les utilisateurs concernés
+        if (assignee != null) {
+            sendNotification(assignee, "Vous avez été assigné à la tâche: " + savedTache.getTitre(), "Tâche");
+        }
+
+        return toDto(savedTache);
     }
 
     @Override
@@ -60,6 +72,7 @@ public class TacheServiceImpl implements TacheService {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
+
     @Override
     public List<TacheDto> getTachesParProjetEtMembre(Long projetId, String email) {
         // Récupérer toutes les tâches du projet et filtrer par l'email de l'assignee
@@ -84,6 +97,7 @@ public class TacheServiceImpl implements TacheService {
                 .orElseThrow(() -> new NotFoundException("Tâche non trouvée avec l'ID: " + taskId));
         return toDto(tache);  // Retourne le DTO de la tâche
     }
+
     @Override
     public TacheDto modifierTache(Long id, TacheDto dto) {
         // Trouver la tâche par ID
@@ -112,12 +126,20 @@ public class TacheServiceImpl implements TacheService {
         }
 
         // Enregistrer les modifications dans la base de données
-        return toDto(tacheRepo.save(tache));
+        Tache updatedTache = tacheRepo.save(tache);
+
+        // Notifier l'utilisateur concerné par la modification
+        if (tache.getAssigneeEmail() != null) {
+            User assignee = userRepo.findByEmail(tache.getAssigneeEmail())
+                    .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
+            sendNotification(assignee, "La tâche " + updatedTache.getTitre() + " a été mise à jour.", "Tâche");
+        }
+
+        return toDto(updatedTache);
     }
 
     @Override
     public void supprimerTache(Long id) {
-        // Vérifier si la tâche existe avant de la supprimer
         if (!tacheRepo.existsById(id)) {
             throw new NotFoundException("Tâche à supprimer non trouvée");
         }
@@ -137,5 +159,17 @@ public class TacheServiceImpl implements TacheService {
         dto.setCommentaires(t.getCommentaires());
         dto.setFichier(t.getFichier());
         return dto;
+    }
+
+    // Méthode pour envoyer une notification
+    private void sendNotification(User user, String message, String type) {
+        // Créer la notification
+        Notification notification = new Notification();
+        notification.setMessage(message);
+        notification.setType(type);  // Type de notification (par exemple, "Tâche", "Projet")
+        notification.setUser(user);
+
+        // Sauvegarder la notification dans la base de données
+        notificationRepo.save(notification);
     }
 }
