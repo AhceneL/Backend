@@ -23,9 +23,8 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime dateCreated = LocalDateTime.now(); // Date de création de la notification
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // L'utilisateur associé à la notification
+    @Column(nullable = false)
+    private String assigneeEmail; // Email de l'utilisateur assigné à la notification
 
     // --- Getters et Setters ---
     public Long getId() {
@@ -68,11 +67,11 @@ public class Notification {
         this.dateCreated = dateCreated;
     }
 
-    public User getUser() {
-        return user;
+    public String getAssigneeEmail() {
+        return assigneeEmail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAssigneeEmail(String assigneeEmail) {
+        this.assigneeEmail = assigneeEmail;
     }
 }

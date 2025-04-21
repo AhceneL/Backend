@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    // Trouver toutes les notifications non lues pour un utilisateur
-    List<Notification> findByUserIdAndIsReadFalse(Long userId);
+    // Trouver les notifications par email de l'utilisateur assigné
+    List<Notification> findByAssigneeEmail(String assigneeEmail);
 
-    // Trouver toutes les notifications d'un utilisateur
-    List<Notification> findByUserId(Long userId);
+    // Trouver les notifications non lues par email de l'utilisateur assigné
+    List<Notification> findByAssigneeEmailAndIsReadFalse(String assigneeEmail);
 }

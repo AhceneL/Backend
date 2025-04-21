@@ -17,13 +17,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForUser(Long userId) {
-        return notificationRepository.findByUserId(userId);
+    public List<Notification> getNotificationsForUser(String email) {
+        return notificationRepository.findByAssigneeEmail(email);  // Recherche par email au lieu de userId
     }
 
     @Override
-    public List<Notification> getUnreadNotificationsForUser(Long userId) {
-        return notificationRepository.findByUserIdAndIsReadFalse(userId);
+    public List<Notification> getUnreadNotificationsForUser(String email) {
+        return notificationRepository.findByAssigneeEmailAndIsReadFalse(email);  // Recherche par email pour notifications non lues
     }
 
     @Override
@@ -35,8 +35,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void clearNotificationsForUser(Long userId) {
-        List<Notification> notifications = notificationRepository.findByUserId(userId);
+    public void clearNotificationsForUser(String email) {
+        List<Notification> notifications = notificationRepository.findByAssigneeEmail(email);
         notificationRepository.deleteAll(notifications);
     }
 }

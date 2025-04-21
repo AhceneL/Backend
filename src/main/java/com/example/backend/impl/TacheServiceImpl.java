@@ -59,7 +59,7 @@ public class TacheServiceImpl implements TacheService {
 
         // Notifier les utilisateurs concernés
         if (assignee != null) {
-            sendNotification(assignee, "Vous avez été assigné à la tâche: " + savedTache.getTitre(), "Tâche");
+            sendNotification(assignee.getEmail(), "Vous avez été assigné à la tâche: " + savedTache.getTitre(), "Tâche");
         }
 
         return toDto(savedTache);
@@ -67,7 +67,6 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     public List<TacheDto> getTachesParProjet(Long projetId) {
-        // Récupérer toutes les tâches du projet et les convertir en DTO
         return tacheRepo.findByProjetId(projetId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -75,7 +74,6 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     public List<TacheDto> getTachesParProjetEtMembre(Long projetId, String email) {
-        // Récupérer toutes les tâches du projet et filtrer par l'email de l'assignee
         List<Tache> taches = tacheRepo.findByProjetId(projetId);
         return taches.stream()
                 .filter(t -> t.getAssigneeEmail().equals(email))
@@ -85,9 +83,8 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     public List<TacheDto> getTachesParAssigneeEmail(String assigneeEmail) {
-        // Récupérer toutes les tâches assignées à l'email
         return tacheRepo.findByAssigneeEmail(assigneeEmail).stream()
-                .map(this::toDto) // Convertir en DTO
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -95,24 +92,20 @@ public class TacheServiceImpl implements TacheService {
     public TacheDto getTacheById(Long taskId) {
         Tache tache = tacheRepo.findById(taskId)
                 .orElseThrow(() -> new NotFoundException("Tâche non trouvée avec l'ID: " + taskId));
-        return toDto(tache);  // Retourne le DTO de la tâche
+        return toDto(tache);
     }
 
     @Override
     public TacheDto modifierTache(Long id, TacheDto dto) {
-        // Trouver la tâche par ID
         Tache tache = tacheRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Tâche non trouvée"));
 
-        // Modifier les champs de la tâche
         tache.setTitre(dto.getTitre());
         tache.setDescription(dto.getDescription());
         tache.setStatut(dto.getStatut());
         tache.setDateLimite(dto.getDateLimite());
 
-        // Mettre à jour les commentaires si présents
         if (dto.getCommentaires() != null) {
-            // Ajouter uniquement les commentaires qui n'existent pas déjà
             for (String commentaire : dto.getCommentaires()) {
                 if (!tache.getCommentaires().contains(commentaire)) {
                     tache.getCommentaires().add(commentaire);
@@ -120,19 +113,14 @@ public class TacheServiceImpl implements TacheService {
             }
         }
 
-        // Mettre à jour le fichier si présent
         if (dto.getFichier() != null) {
             tache.setFichier(dto.getFichier());
         }
 
-        // Enregistrer les modifications dans la base de données
         Tache updatedTache = tacheRepo.save(tache);
 
-        // Notifier l'utilisateur concerné par la modification
         if (tache.getAssigneeEmail() != null) {
-            User assignee = userRepo.findByEmail(tache.getAssigneeEmail())
-                    .orElseThrow(() -> new NotFoundException("Utilisateur assigné non trouvé"));
-            sendNotification(assignee, "La tâche " + updatedTache.getTitre() + " a été mise à jour.", "Tâche");
+            sendNotification(tache.getAssigneeEmail(), "La tâche " + updatedTache.getTitre() + " a été mise à jour.", "Tâche");
         }
 
         return toDto(updatedTache);
@@ -143,11 +131,10 @@ public class TacheServiceImpl implements TacheService {
         if (!tacheRepo.existsById(id)) {
             throw new NotFoundException("Tâche à supprimer non trouvée");
         }
-        tacheRepo.deleteById(id); // Supprimer la tâche
+        tacheRepo.deleteById(id);
     }
 
     private TacheDto toDto(Tache t) {
-        // Convertir une entité Tache en DTO pour la réponse
         TacheDto dto = new TacheDto();
         dto.setId(t.getId());
         dto.setTitre(t.getTitre());
@@ -155,19 +142,19 @@ public class TacheServiceImpl implements TacheService {
         dto.setStatut(t.getStatut());
         dto.setDateLimite(t.getDateLimite());
         dto.setProjetId(t.getProjet().getId());
-        dto.setAssigneeEmail(t.getAssigneeEmail()); // Utilisation de l'email du membre
+        dto.setAssigneeEmail(t.getAssigneeEmail());  // Utilisation de l'email du membre
         dto.setCommentaires(t.getCommentaires());
         dto.setFichier(t.getFichier());
         return dto;
     }
 
-    // Méthode pour envoyer une notification
-    private void sendNotification(User user, String message, String type) {
+    // Méthode pour envoyer une notification en utilisant l'email de l'utilisateur assigné
+    private void sendNotification(String assigneeEmail, String message, String type) {
         // Créer la notification
         Notification notification = new Notification();
         notification.setMessage(message);
         notification.setType(type);  // Type de notification (par exemple, "Tâche", "Projet")
-        notification.setUser(user);
+        notification.setAssigneeEmail(assigneeEmail);  // Assigner l'email de l'utilisateur concerné
 
         // Sauvegarder la notification dans la base de données
         notificationRepo.save(notification);

@@ -18,17 +18,17 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    // Obtenir toutes les notifications d'un utilisateur
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable Long userId) {
-        List<Notification> notifications = notificationService.getNotificationsForUser(userId);
+    // Obtenir toutes les notifications d'un utilisateur par son email
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable String email) {
+        List<Notification> notifications = notificationService.getNotificationsForUser(email);
         return ResponseEntity.ok(notifications);
     }
 
-    // Obtenir les notifications non lues pour un utilisateur
-    @GetMapping("/user/{userId}/unread")
-    public ResponseEntity<List<Notification>> getUnreadNotificationsForUser(@PathVariable Long userId) {
-        List<Notification> notifications = notificationService.getUnreadNotificationsForUser(userId);
+    // Obtenir les notifications non lues pour un utilisateur par son email
+    @GetMapping("/user/{email}/unread")
+    public ResponseEntity<List<Notification>> getUnreadNotificationsForUser(@PathVariable String email) {
+        List<Notification> notifications = notificationService.getUnreadNotificationsForUser(email);
         return ResponseEntity.ok(notifications);
     }
 
@@ -39,10 +39,10 @@ public class NotificationController {
         return ResponseEntity.ok(notification);
     }
 
-    // Effacer toutes les notifications pour un utilisateur
-    @DeleteMapping("/user/{userId}")
-    public ResponseEntity<Void> clearNotificationsForUser(@PathVariable Long userId) {
-        notificationService.clearNotificationsForUser(userId);
+    // Effacer toutes les notifications pour un utilisateur par email
+    @DeleteMapping("/user/{email}")
+    public ResponseEntity<Void> clearNotificationsForUser(@PathVariable String email) {
+        notificationService.clearNotificationsForUser(email);
         return ResponseEntity.noContent().build();
     }
 }
