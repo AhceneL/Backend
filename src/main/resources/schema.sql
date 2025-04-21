@@ -37,6 +37,7 @@ CREATE TABLE tache (
                        projet_id INTEGER REFERENCES projet(id) ON DELETE CASCADE, -- Clé étrangère vers la table projet
                        assignee_email VARCHAR(255), -- Email de l'utilisateur assigné
                        FOREIGN KEY (assignee_email) REFERENCES users(email) ON DELETE SET NULL -- Clé étrangère vers l'email de l'utilisateur, ON DELETE SET NULL
+                       fichier VARCHAR(255)
 );
 
 
@@ -48,3 +49,11 @@ CREATE TABLE notifications (
                                lu BOOLEAN DEFAULT FALSE,
                                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE commentaires (
+                              id SERIAL PRIMARY KEY,
+                              tache_id BIGINT NOT NULL,
+                              commentaire TEXT NOT NULL,
+                              FOREIGN KEY (tache_id) REFERENCES tache(id) ON DELETE CASCADE
+);
+

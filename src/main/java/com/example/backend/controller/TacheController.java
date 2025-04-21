@@ -71,6 +71,20 @@ public class TacheController {
         }
     }
 
+    @GetMapping("/projet/{projetId}/membre/{email}")
+    public ResponseEntity<List<TacheDto>> getTachesParProjetEtMembre(
+            @PathVariable Long projetId,
+            @PathVariable String email) {
+        try {
+            List<TacheDto> tasks = tacheService.getTachesParProjetEtMembre(projetId, email);
+            return ResponseEntity.ok(tasks);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(null); // Tâches non trouvées
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null); // Erreur serveur
+        }
+    }
+
 
     /**
      * Modifier une tâche existante.

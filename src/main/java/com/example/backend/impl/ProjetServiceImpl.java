@@ -77,7 +77,13 @@ public class ProjetServiceImpl implements ProjetService {
                 .map(this::toDto)
                 .orElseThrow(() -> new NotFoundException("Projet non trouvé"));
     }
-
+    @Override
+    public List<ProjetDto> getProjetsParMembre(String email) {
+        List<Projet> projets = projetRepo.findByMembres_Email(email);  // Utiliser le repository pour récupérer les projets associés au membre
+        return projets.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
     @Override
     public List<ProjetDto> getAllProjets() {
         return projetRepo.findAll().stream()
@@ -145,7 +151,10 @@ public class ProjetServiceImpl implements ProjetService {
         dto.setMembresEmails(projet.getMembres().stream()
                 .map(User::getEmail)
                 .collect(Collectors.toList()));
-
+        // Récupérer les emails des membres
+        dto.setMembresEmails(projet.getMembres().stream()
+                .map(membre -> membre.getEmail())
+                .collect(Collectors.toList()));
         return dto;
     }
 

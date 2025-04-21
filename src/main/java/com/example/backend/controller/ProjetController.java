@@ -37,6 +37,11 @@ public class ProjetController {
         return ResponseEntity.ok(projetService.getAllProjets());
     }
 
+    @GetMapping("/projets-membre")
+    public ResponseEntity<List<ProjetDto>> getProjetsParMembre(@RequestParam String email) {
+        List<ProjetDto> projets = projetService.getProjetsParMembre(email);
+        return ResponseEntity.ok(projets);
+    }
     // ✅ Récupérer les projets du créateur connecté
     @GetMapping("/mes-projets")
     public ResponseEntity<List<ProjetDto>> getMesProjets() {

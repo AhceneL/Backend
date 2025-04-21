@@ -22,4 +22,5 @@ public interface ProjetService {
 
     // ✅ Ajouter un membre à un projet
     void addMemberToProject(Long projetId, String email);
+    List<ProjetDto> getProjetsParMembre(String email);
 }

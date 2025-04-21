@@ -11,4 +11,5 @@ public interface TacheService {
     TacheDto getTacheById(Long taskId);
     TacheDto modifierTache(Long id, TacheDto dto);
     void supprimerTache(Long id);
+    List<TacheDto> getTachesParProjetEtMembre(Long projetId, String email);
 }

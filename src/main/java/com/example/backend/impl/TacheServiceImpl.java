@@ -60,6 +60,15 @@ public class TacheServiceImpl implements TacheService {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<TacheDto> getTachesParProjetEtMembre(Long projetId, String email) {
+        // Récupérer toutes les tâches du projet et filtrer par l'email de l'assignee
+        List<Tache> taches = tacheRepo.findByProjetId(projetId);
+        return taches.stream()
+                .filter(t -> t.getAssigneeEmail().equals(email))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<TacheDto> getTachesParAssigneeEmail(String assigneeEmail) {
