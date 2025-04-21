@@ -41,13 +41,14 @@ CREATE TABLE tache (
 );
 
 
---  Notifications
 CREATE TABLE notifications (
-                               id SERIAL PRIMARY KEY,
-                               contenu TEXT NOT NULL,
-                               date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                               lu BOOLEAN DEFAULT FALSE,
-                               user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+    id SERIAL PRIMARY KEY,  -- Identifiant unique de la notification
+    message TEXT NOT NULL,  -- Le message de la notification
+    type VARCHAR(100) NOT NULL,  -- Le type de notification (par exemple, "Tâche", "Projet")
+    is_read BOOLEAN DEFAULT FALSE,  -- Statut de lecture (false par défaut)
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Date de création de la notification
+    assignee_email VARCHAR(255) NOT NULL  -- Email de l'utilisateur assigné à la notification
+);
 );
 
 CREATE TABLE commentaires (
