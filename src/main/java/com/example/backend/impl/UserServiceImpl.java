@@ -47,8 +47,12 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserProfile(String email) {
         User user = repo.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Utilisateur avec cet email non trouvé"));
-        return toDto(user);
+
+        // Mettre l'avatar dans le UserDto
+        UserDto userDto = toDto(user);  // Assurez-vous que la méthode toDto inclut l'avatar
+        return userDto;
     }
+
     @Override
     // Nouvelle méthode pour mettre à jour le profil de l'utilisateur
     public UserDto updateUserProfile(UserDto userDto) {
@@ -60,10 +64,12 @@ public class UserServiceImpl implements UserService {
         user.setNom(userDto.getNom());
         user.setPrenom(userDto.getPrenom());
         user.setEmail(userDto.getEmail());  // Mise à jour de l'email
+        user.setAvatar(userDto.getAvatar());  // Mise à jour de l'avatar
 
         // Enregistrer l'utilisateur mis à jour
         return toDto(repo.save(user));
     }
+
 
 
 
@@ -74,6 +80,7 @@ public class UserServiceImpl implements UserService {
         dto.setNom(user.getNom());
         dto.setPrenom(user.getPrenom());
         dto.setRole(user.getRole());
+        dto.setAvatar(user.getAvatar());
         return dto;
     }
 }

@@ -5,7 +5,8 @@ CREATE TABLE users (
                        password VARCHAR(255) NOT NULL,
                        nom VARCHAR(100),
                        prenom VARCHAR(100),
-                       role VARCHAR(50) NOT NULL -- "membre" ou "gestionnaire"
+                       role VARCHAR(50) NOT NULL , -- "membre" ou "gestionnaire"
+                       avatar VARCHAR(255);
 );
 
 --  Projets
@@ -36,7 +37,7 @@ CREATE TABLE tache (
                        date_limite DATE,
                        projet_id INTEGER REFERENCES projet(id) ON DELETE CASCADE, -- Clé étrangère vers la table projet
                        assignee_email VARCHAR(255), -- Email de l'utilisateur assigné
-                       FOREIGN KEY (assignee_email) REFERENCES users(email) ON DELETE SET NULL -- Clé étrangère vers l'email de l'utilisateur, ON DELETE SET NULL
+                       FOREIGN KEY (assignee_email) REFERENCES users(email) ON DELETE SET NULL, -- Clé étrangère vers l'email de l'utilisateur, ON DELETE SET NULL
                        fichier VARCHAR(255)
 );
 

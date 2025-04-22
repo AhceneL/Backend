@@ -20,7 +20,7 @@ public class User {
 
     private String nom;
     private String prenom;
-
+    private String avatar;
     @Column(nullable = false)
     private String role; // "membre" ou "gestionnaire"
 
@@ -75,5 +75,11 @@ public class User {
 
     @ManyToMany(mappedBy = "membres")
     private List<Projet> projets = new ArrayList<>();
+    public String getAvatar() {
+        return avatar;
+    }
 
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 }

@@ -7,6 +7,7 @@ public class UserDto {
     private String nom;
     private String prenom;
     private String role;
+    private String avatar;
 
     // --- Getters et Setters ---
     public Long getId() {
@@ -47,5 +48,12 @@ public class UserDto {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
